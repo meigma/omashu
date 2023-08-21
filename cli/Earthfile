@@ -1,0 +1,66 @@
+VERSION 0.7
+FROM golang:1.20-alpine3.18
+
+deps:
+    WORKDIR /work
+
+    # Install external deps
+    RUN apk add --no-cache gcc musl-dev
+
+    # Install any static analysis tools
+    DO ../udts/analysis/go+SETUP
+
+    # Install package dependencies
+    COPY go.mod go.sum ./
+    RUN go mod download
+
+    # Make sure the ginkgo binary is available for the test stage
+    RUN go install github.com/onsi/ginkgo/v2/ginkgo
+
+    SAVE ARTIFACT go.mod AS LOCAL go.mod
+    SAVE ARTIFACT go.sum AS LOCAL go.sum
+
+check:
+    FROM +deps
+
+    COPY --dir cmd pkg .
+    DO ../udts/analysis/go+ALL
+
+test:
+    FROM +check
+
+    RUN ginkgo ./...
+
+build:
+    FROM +check
+
+    ENV CGO_ENABLED=0
+    RUN go build -ldflags="-extldflags=-static" -o bin/ci cmd/main.go
+
+    SAVE ARTIFACT bin/ci ci
+    SAVE ARTIFACT bin/ci AS LOCAL bin/ci
+
+docker:
+    FROM earthly/earthly:v0.7.6
+
+    ARG tag=latest
+    ARG registry
+
+    WORKDIR /workspace
+
+    # Add runtime dependencies
+    RUN apk add --no-cache aws-cli bash git jq
+
+    # Trust WORKDIR
+    RUN git config --global --add safe.directory /workspace
+
+    COPY +build/ci /usr/local/bin/ci
+
+    IF [ "$registry" = "" ]
+        ARG registry_final=$registry
+    ELSE
+        ARG registry_final=${registry}/
+    END
+
+    ENTRYPOINT ["/usr/local/bin/ci"]
+    SAVE IMAGE --push ${registry_final}cli:${tag}
