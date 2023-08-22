@@ -1,0 +1,14 @@
+name: Dogfood
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Discover Action
+        uses: ./actions/discover
+      - name: Test Action Result
+        run: |
+          cat ${GITHUB_WORKSPACE}/commit_info.txt
