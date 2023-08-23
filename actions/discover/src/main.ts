@@ -2,7 +2,7 @@ import * as core from "@actions/core"
 import * as github from "@actions/github"
 import { promises as fs } from "fs"
 
-async function run() {
+export async function run() {
     try {
         const commit = github.context.sha
         const message = github.context.payload['head_commit']?.message
