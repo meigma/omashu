@@ -28,3 +28,5 @@ export async function run() {
 function isSemVer(version: string): boolean {
     return /^\d+\.\d+\.\d+$/.test(version)
 }
+
+run()
