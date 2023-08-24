@@ -11,7 +11,7 @@ jobs:
         uses: ./actions/setup
       - name: Test setup
         run: |
-          omashu --help
+          /usr/local/bin/omashu --help
       - name: Run Discover Action
         uses: ./actions/discover
       - name: Test Action Result
