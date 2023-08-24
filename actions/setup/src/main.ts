@@ -15,7 +15,10 @@ export async function run() {
     const finalURL = baseURL.replace(/%VER%/g, version)
     if (process.platform == 'linux') {
         const downloadPath = await tc.downloadTool(finalURL)
-        await tc.extractTar(downloadPath, '/usr/local/bin')
+        const extractPath = await tc.extractTar(downloadPath, '/usr/local/bin')
+
+        core.info(`Downloaded to ${downloadPath}`)
+        core.info(`Extracted to ${extractPath}`)
     } else {
         core.setFailed('Unsupported platform')
     }
