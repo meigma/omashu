@@ -13,6 +13,7 @@ export async function run() {
     }
 
     const finalURL = baseURL.replace(/%VER%/g, version)
+    core.info(`Platform is ${process.platform}`)
     if (process.platform == 'linux') {
         const downloadPath = await tc.downloadTool(finalURL)
         const extractPath = await tc.extractTar(downloadPath, '/usr/local/bin')
