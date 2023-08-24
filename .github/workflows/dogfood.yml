@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Setup Omashu
+        uses: ./actions/setup
       - name: Run Discover Action
         uses: ./actions/discover
       - name: Test Action Result
