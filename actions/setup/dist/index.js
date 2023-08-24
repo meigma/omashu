@@ -6634,12 +6634,11 @@ function run() {
             return;
         }
         const finalURL = baseURL.replace(/%VER%/g, version);
-        core.info(`Platform is ${process.platform}`);
+        core.info(`Downlaoading version ${version} from ${finalURL}`);
         if (process.platform == 'linux') {
             const downloadPath = yield tc.downloadTool(finalURL);
             const extractPath = yield tc.extractTar(downloadPath, '/usr/local/bin');
-            core.info(`Downloaded to ${downloadPath}`);
-            core.info(`Extracted to ${extractPath}`);
+            core.info(`Installed omashu to ${extractPath}`);
         }
         else {
             core.setFailed('Unsupported platform');
