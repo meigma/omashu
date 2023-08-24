@@ -6634,9 +6634,12 @@ function run() {
             return;
         }
         const finalURL = baseURL.replace(/%VER%/g, version);
+        core.info(`Platform is ${process.platform}`);
         if (process.platform == 'linux') {
             const downloadPath = yield tc.downloadTool(finalURL);
-            yield tc.extractTar(downloadPath, '/usr/local/bin');
+            const extractPath = yield tc.extractTar(downloadPath, '/usr/local/bin');
+            core.info(`Downloaded to ${downloadPath}`);
+            core.info(`Extracted to ${extractPath}`);
         }
         else {
             core.setFailed('Unsupported platform');
@@ -6647,6 +6650,7 @@ exports.run = run;
 function isSemVer(version) {
     return /^\d+\.\d+\.\d+$/.test(version);
 }
+run();
 
 
 /***/ }),
