@@ -1,0 +1,16 @@
+name: Test
+on:
+  push:
+
+jobs:
+  test-setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run setup
+        uses: ./actions/setup
+        with:
+          version: 0.1.0
+      - name: Verify Omashu is installed
+        run: |
+          omashu --help

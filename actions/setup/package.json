@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "format": "prettier --write '**/*.ts'",
+    "format:check": "prettier --check '**/*.ts'",
     "lint": "eslint ./src",
     "package": "ncc build src/index.ts --license licenses.txt",
     "test": "jest"
