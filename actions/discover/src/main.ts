@@ -1,16 +1,23 @@
 import * as core from "@actions/core"
 import * as github from "@actions/github"
 import { promises as fs } from "fs"
+import { exec } from "child_process"
+import { quote } from "shell-quote";
 
 export async function run() {
     try {
-        const commit = github.context.sha
-        const message = github.context.payload['head_commit']?.message
-        const content = `Commit Hash: ${commit}\nCommit Message: ${message || 'N/A'}`;
-        const outputPath = `${process.env.GITHUB_WORKSPACE}/commit_info.txt`;
+        const parse = core.getBooleanInput('parse_images')
+        const paths = quote([core.getInput('paths')])
+        const targets = core.getInput('targets')
 
-        await fs.writeFile(outputPath, content, 'utf-8');
-        core.info(`Commit info written to ${outputPath}`);
+        const flags = parse ? ['-i'] : []
+        if (targets.trim() !== '') {
+            flags.push(...targets.split(' ').map(t => `-t ${t}`))
+        }
+        const command = ['omashu', 'scan', ...flags, paths].filter(Boolean).join(' ');
+
+        core.info(`Running command: ${command}`)
+        const output = await execCommand(command)
     } catch (error) {
         if (error instanceof Error) {
             core.setFailed(error.message)
@@ -20,4 +27,16 @@ export async function run() {
     }
 }
 
-run()
+function execCommand(command: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error || stderr) {
+                reject(new Error(error ? error.message : stderr));
+            } else {
+                resolve(stdout);
+            }
+        });
+    });
+}
+
+//run()

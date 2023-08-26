@@ -1,52 +1,68 @@
 import * as core from "@actions/core"
 import * as github from "@actions/github"
-import { promises as fs } from "fs"
+import { exec } from "child_process"
 import { run } from "./main"
 
-jest.mock("@actions/core")
-jest.mock("@actions/github", () => ({
-    context: {
-        sha: "mockCommitHash",
-        payload: {
-            head_commit: {
-                message: "mockCommitMessage"
-            }
-        }
-    }
+jest.mock("@actions/core", () => ({
+    getBooleanInput: jest.fn(),
+    getInput: jest.fn(),
+    setFailed: jest.fn(),
+    info: jest.fn()
 }))
-jest.mock("fs", () => ({
-    promises: {
-        writeFile: jest.fn()
-    }
-}))
+jest.mock("child_process", () => ({
+    exec: jest.fn((command, callback) => {
+        callback(null, 'mocked output', '');
+    })
+}));
+
+const t = '[{"images":["cli"],"path":"/home/josh/code/meigma/omashu/cli"}]'
 
 describe("Discover Action", () => {
     afterEach(() => {
-        jest.clearAllMocks()
-    })
+        jest.clearAllMocks();
+    });
 
-    it("should write the commit info to a file and set the output", async () => {
-        const outputPath = `${process.env.GITHUB_WORKSPACE}/commit_info.txt`;
-        const mockWriteFile = fs.writeFile as jest.MockedFunction<typeof fs.writeFile>;
+    describe("when testing running the omashu command", () => {
+        const testCases = [
+            {
+                parseImages: true,
+                paths: "path1 path2",
+                targets: "target1 target2",
+                expectedCommand: "omashu scan -i -t target1 -t target2 'path1 path2'",
+            },
+            {
+                parseImages: false,
+                paths: "path1",
+                targets: "target1",
+                expectedCommand: "omashu scan -t target1 path1",
+            },
+            {
+                parseImages: false,
+                paths: ".",
+                targets: "",
+                expectedCommand: "omashu scan .",
+            },
+        ];
 
-        await run();
+        it.each(testCases)(
+            "should execute the correct command for parseImages=%s, paths=%s, targets=%s",
+            async ({ parseImages, paths, targets, expectedCommand }) => {
+                (core.getBooleanInput as jest.Mock).mockReturnValue(parseImages);
+                (core.getInput as jest.Mock).mockImplementation((name: string) => {
+                    switch (name) {
+                        case "paths":
+                            return paths;
+                        case "targets":
+                            return targets;
+                        default:
+                            return '';
+                    }
+                });
 
-        expect(mockWriteFile).toHaveBeenCalledWith(
-            outputPath,
-            'Commit Hash: mockCommitHash\nCommit Message: mockCommitMessage',
-            'utf-8'
+                await run();
+
+                expect(exec).toHaveBeenCalledWith(expectedCommand, expect.anything());
+            }
         );
-        expect(core.info).toHaveBeenCalledWith(`Commit info written to ${outputPath}`);
-    })
-
-    it("should handle errors gracefully", async () => {
-        const mockWriteFile = fs.writeFile as jest.MockedFunction<typeof fs.writeFile>;
-        mockWriteFile.mockImplementationOnce(() => {
-            throw new Error("Filesystem error")
-        })
-
-        await run();
-
-        expect(core.setFailed).toHaveBeenCalledWith("Filesystem error");
-    })
-})
+    });
+});
