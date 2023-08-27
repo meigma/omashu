@@ -31,19 +31,19 @@ describe('Discover Action', () => {
         parseImages: true,
         paths: 'path1 path2',
         targets: 'target1 target2',
-        expectedCommand: "omashu scan -i -t target1 -t target2 'path1 path2'"
+        expectedCommand: "omashu scan -ji -t target1 -t target2 'path1 path2'"
       },
       {
         parseImages: false,
         paths: 'path1',
         targets: 'target1',
-        expectedCommand: 'omashu scan -t target1 path1'
+        expectedCommand: 'omashu scan -j -t target1 path1'
       },
       {
         parseImages: false,
         paths: '.',
         targets: '',
-        expectedCommand: 'omashu scan .'
+        expectedCommand: 'omashu scan -j .'
       }
     ]
 
