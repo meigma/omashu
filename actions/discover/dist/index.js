@@ -3030,7 +3030,7 @@ async function run() {
         const parse = core.getBooleanInput('parse_images');
         const paths = (0, shell_quote_1.quote)([core.getInput('paths')]);
         const targets = core.getInput('targets');
-        const flags = parse ? ['-i'] : [];
+        const flags = parse ? ['-ji'] : ['-j'];
         if (targets.trim() !== '') {
             flags.push(...targets.split(' ').map(t => `-t ${t}`));
         }
