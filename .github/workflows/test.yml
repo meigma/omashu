@@ -15,7 +15,7 @@ jobs:
         id: discover
         uses: ./actions/discover
         with:
-          parse: true
+          parse_images: true
           paths: .
           targets: docker
       - name: Print output
