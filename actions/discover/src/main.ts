@@ -17,7 +17,7 @@ export async function run() {
         const command = ['omashu', 'scan', ...flags, paths].filter(Boolean).join(' ');
 
         core.info(`Running command: ${command}`)
-        const output = await execCommand(command)
+        core.setOutput('json', await execCommand(command))
     } catch (error) {
         if (error instanceof Error) {
             core.setFailed(error.message)

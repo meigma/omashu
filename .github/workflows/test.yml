@@ -3,7 +3,7 @@ on:
   push:
 
 jobs:
-  test-setup:
+  integration:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -11,6 +11,12 @@ jobs:
         uses: ./actions/setup
         with:
           version: 0.1.0
-      - name: Verify Omashu is installed
-        run: |
-          omashu --help
+      - name: Discover
+        id: discover
+        uses: ./actions/discover
+        with:
+          parse: true
+          paths: .
+          targets: docker
+      - name: Print output
+        run: echo "${{ steps.discover.outputs.json }}"

@@ -7,6 +7,7 @@ jest.mock("@actions/core", () => ({
     getBooleanInput: jest.fn(),
     getInput: jest.fn(),
     setFailed: jest.fn(),
+    setOutput: jest.fn(),
     info: jest.fn()
 }))
 jest.mock("child_process", () => ({
@@ -14,8 +15,6 @@ jest.mock("child_process", () => ({
         callback(null, 'mocked output', '');
     })
 }));
-
-const t = '[{"images":["cli"],"path":"/home/josh/code/meigma/omashu/cli"}]'
 
 describe("Discover Action", () => {
     afterEach(() => {
@@ -62,6 +61,7 @@ describe("Discover Action", () => {
                 await run();
 
                 expect(exec).toHaveBeenCalledWith(expectedCommand, expect.anything());
+                expect((core.setOutput as jest.Mock)).toHaveBeenCalledWith('json', 'mocked output');
             }
         );
     });
