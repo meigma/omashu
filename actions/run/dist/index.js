@@ -2909,18 +2909,18 @@ async function spawnCommand(command, args) {
         const child = (0,external_child_process_namespaceObject.spawn)(command, args);
         let output = '';
         child.stdout.on('data', data => {
-            process.stdout.write(data); // Write data to local stdout
-            output += data; // Append data to the local variable
+            process.stdout.write(data);
         });
         child.stderr.on('data', data => {
-            console.error(`stderr: ${data}`);
+            process.stderr.write(data);
+            output += data;
         });
         child.on('close', code => {
             if (code !== 0) {
-                reject(new Error(`child process exited with code ${code}`));
+                reject(new Error(`child process exited with code: ${code}`));
             }
             else {
-                resolve(output); // Resolve the promise with the captured output
+                resolve(output);
             }
         });
     });
