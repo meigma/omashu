@@ -20,3 +20,8 @@ jobs:
           targets: docker
       - name: Print output
         run: echo "${{ steps.discover.outputs.json }}"
+      - name: Run
+        uses: ./actions/run
+        with:
+          earthfile: ./cli
+          target: docker

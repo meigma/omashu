@@ -1,0 +1,12 @@
+name: "Run"
+description: "Runs an Earthly target"
+inputs:
+  earthfile:
+    description: The path to the Earthfile containing the target to run
+    required: true
+  target:
+    description: The name of the target to run
+    required: true
+runs:
+  using: "node16"
+  main: "dist/index.js"
