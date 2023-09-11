@@ -1,0 +1,22 @@
+name: Test
+on:
+  push:
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run setup
+        uses: ./actions/setup
+        with:
+          version: 0.1.0
+      - name: Discover
+        id: discover
+        uses: ./actions/discover
+        with:
+          parse_images: true
+          paths: .
+          targets: docker
+      - name: Print output
+        run: echo "${{ steps.discover.outputs.json }}"

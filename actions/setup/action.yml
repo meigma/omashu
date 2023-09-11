@@ -1,0 +1,10 @@
+name: "Setup"
+description: "Setup the Omashu CLI on the runner"
+inputs:
+  version:
+    description: "The version of Omashu to install"
+    required: false
+    default: "0.1.0"
+runs:
+  using: "node16"
+  main: "dist/index.js"

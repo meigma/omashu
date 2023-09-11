@@ -1,0 +1,18 @@
+name: "Discover"
+description: "Discover Earthfiles in the repository"
+inputs:
+  parse_images:
+    description: Whether the image names from the given targets should be returnd (requires at least one target)
+    required: false
+    default: "false"
+  paths:
+    description: A space separated list of paths to search
+    required: false
+    default: "."
+  targets:
+    description: A space seperated list of targets to filter against
+    required: false
+    default: ""
+runs:
+  using: "node16"
+  main: "dist/index.js"

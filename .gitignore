@@ -1,3 +1,6 @@
 # Nix
 .devenv
 .direnv
+
+# Node
+node_modules

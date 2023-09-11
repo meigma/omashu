@@ -31,6 +31,7 @@
           name = "Omashu";
           packages = with pkgs; [
             nodejs_20
+            nodePackages.typescript
           ];
           enterShell = ''
             echo "Welcome to the Omashu development environment!"
