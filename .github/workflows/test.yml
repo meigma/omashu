@@ -11,6 +11,10 @@ jobs:
         uses: ./actions/setup
         with:
           version: 0.1.0
+      - name: Install Earthly
+        uses: earthly/actions-setup@v1
+        with:
+          version: 0.7.15
       - name: Discover
         id: discover
         uses: ./actions/discover
