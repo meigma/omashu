@@ -2843,23 +2843,6 @@ module.exports = require("util");
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -2883,16 +2866,11 @@ var __webpack_exports__ = {};
 // ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
 
-// EXPORTS
-__nccwpck_require__.d(__webpack_exports__, {
-  "run": () => (/* binding */ run)
-});
-
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(186);
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
-;// CONCATENATED MODULE: ./src/index.ts
+;// CONCATENATED MODULE: ./src/run.ts
 
 
 async function run() {
@@ -2902,7 +2880,15 @@ async function run() {
     const args = [`${earthfile}+${target}`];
     core.info(`Running command: ${command} ${args.join(' ')}`);
     const output = await spawnCommand(command, args);
-    core.info('Output length is ' + output.length);
+    // TODO: The newest version of Earthly attaches annotations to the images
+    let matches;
+    const regex = /^Image \+\S+ output as (.*?)$/gm;
+    const images = [];
+    while ((matches = regex.exec(output)) !== null) {
+        images.push(matches[1]);
+    }
+    core.info(`Found images: ${images.join(" ")}`);
+    core.setOutput('images', images.join(" "));
 }
 async function spawnCommand(command, args) {
     return new Promise((resolve, reject) => {
@@ -2925,6 +2911,9 @@ async function spawnCommand(command, args) {
         });
     });
 }
+
+;// CONCATENATED MODULE: ./src/index.ts
+
 run();
 
 })();
