@@ -13,7 +13,7 @@ export async function run(): Promise<void> {
 
     // TODO: The newest version of Earthly attaches annotations to the images
     let matches
-    const regex = /^Image \+\S+ output as (.*?)$/gm
+    const regex = /^Image .*? output as (.*?)$/gm
     const images = [];
     while ((matches = regex.exec(output)) !== null) {
         images.push(matches[1]);
