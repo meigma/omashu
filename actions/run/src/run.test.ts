@@ -26,6 +26,8 @@ describe('Run Action', () => {
         earthfile: 'earthfile',
         flags: '',
         output: '',
+        runner_address: '',
+        runner_port: '',
         target: 'target',
         command: ['earthfile+target'],
         images: ''
@@ -35,8 +37,21 @@ describe('Run Action', () => {
         earthfile: 'earthfile',
         flags: '',
         output: '',
+        runner_address: '',
+        runner_port: '',
         target: 'target',
         command: ['--artifact', 'earthfile+target/artifact', 'artifact'],
+        images: ''
+      },
+      {
+        artifact: '',
+        earthfile: 'earthfile',
+        flags: '',
+        output: '',
+        runner_address: 'localhost',
+        runner_port: '8372',
+        target: 'target',
+        command: ['earthfile+target', '--buildkit-host', 'tcp://localhost:8372'],
         images: ''
       },
       {
@@ -45,13 +60,15 @@ describe('Run Action', () => {
         flags: '--flag1 test -f2 test2',
         output:
           'Image +docker output as image1:tag1\nImage +docker output as image2:tag2\n',
+        runner_address: '',
+        runner_port: '',
         target: 'target',
         command: ['earthfile+target', '--flag1', 'test', '-f2', 'test2'],
         images: 'image1:tag1 image2:tag2'
       }
     ])(
       `should execute the correct command`,
-      async ({ artifact, earthfile, flags, output, target, command, images }) => {
+      async ({ artifact, earthfile, flags, output, runner_address, runner_port, target, command, images }) => {
         const getInputMock = core.getInput as jest.Mock
         getInputMock.mockImplementation((name: string) => {
           switch (name) {
@@ -63,6 +80,10 @@ describe('Run Action', () => {
               return flags
             case 'output':
               return output
+            case 'runner_address':
+              return runner_address
+            case 'runner_port':
+              return runner_port
             case 'target':
               return target
             default:
