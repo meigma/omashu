@@ -2874,13 +2874,13 @@ const external_child_process_namespaceObject = require("child_process");
 
 
 async function run() {
+    const artifact = core.getInput('artifact');
     const earthfile = core.getInput('earthfile');
     const flags = core.getInput('flags');
     const target = core.getInput('target');
     const command = 'earthly';
-    const args = flags
-        ? [`${earthfile}+${target}`, ...flags.split(' ')]
-        : [`${earthfile}+${target}`];
+    let args = artifact ? ['--artifact', `${earthfile}+${target}/${artifact}`, `${artifact}`] : [`${earthfile}+${target}`];
+    args = flags ? args.concat(flags.split(' ')) : args;
     core.info(`Running command: ${command} ${args.join(' ')}`);
     const output = await spawnCommand(command, args);
     // TODO: The newest version of Earthly attaches annotations to the images

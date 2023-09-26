@@ -39,7 +39,6 @@ build:
     RUN go build -ldflags="-extldflags=-static" -o bin/omashu cmd/main.go
 
     SAVE ARTIFACT bin/omashu omashu
-    SAVE ARTIFACT bin/omashu AS LOCAL bin/omashu
 
 docker:
     FROM earthly/earthly:v0.7.6

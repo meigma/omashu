@@ -22,6 +22,7 @@ describe('Run Action', () => {
   describe('when testing running the earthly command', () => {
     it.each([
       {
+        artifact: '',
         earthfile: 'earthfile',
         flags: '',
         output: '',
@@ -30,6 +31,16 @@ describe('Run Action', () => {
         images: ''
       },
       {
+        artifact: 'artifact',
+        earthfile: 'earthfile',
+        flags: '',
+        output: '',
+        target: 'target',
+        command: ['--artifact', 'earthfile+target/artifact', 'artifact'],
+        images: ''
+      },
+      {
+        artifact: '',
         earthfile: 'earthfile',
         flags: '--flag1 test -f2 test2',
         output:
@@ -40,10 +51,12 @@ describe('Run Action', () => {
       }
     ])(
       `should execute the correct command`,
-      async ({ earthfile, flags, output, target, command, images }) => {
+      async ({ artifact, earthfile, flags, output, target, command, images }) => {
         const getInputMock = core.getInput as jest.Mock
         getInputMock.mockImplementation((name: string) => {
           switch (name) {
+            case 'artifact':
+              return artifact
             case 'earthfile':
               return earthfile
             case 'flags':
