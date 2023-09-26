@@ -2875,9 +2875,12 @@ const external_child_process_namespaceObject = require("child_process");
 
 async function run() {
     const earthfile = core.getInput('earthfile');
+    const flags = core.getInput('flags');
     const target = core.getInput('target');
     const command = 'earthly';
-    const args = [`${earthfile}+${target}`];
+    const args = flags
+        ? [`${earthfile}+${target}`, ...flags.split(' ')]
+        : [`${earthfile}+${target}`];
     core.info(`Running command: ${command} ${args.join(' ')}`);
     const output = await spawnCommand(command, args);
     // TODO: The newest version of Earthly attaches annotations to the images
@@ -2887,8 +2890,8 @@ async function run() {
     while ((matches = regex.exec(output)) !== null) {
         images.push(matches[1]);
     }
-    core.info(`Found images: ${images.join(" ")}`);
-    core.setOutput('images', images.join(" "));
+    core.info(`Found images: ${images.join(' ')}`);
+    core.setOutput('images', images.join(' '));
 }
 async function spawnCommand(command, args) {
     return new Promise((resolve, reject) => {
