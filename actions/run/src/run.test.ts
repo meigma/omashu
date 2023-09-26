@@ -30,18 +30,20 @@ describe('Run Action', () => {
         runner_port: '',
         target: 'target',
         command: ['earthfile+target'],
-        images: ''
+        images: '',
+        artifacts: ''
       },
       {
         artifact: 'artifact',
         earthfile: 'earthfile',
         flags: '',
-        output: '',
+        output: 'Artifact +target/artifact output as artifact\n',
         runner_address: '',
         runner_port: '',
         target: 'target',
         command: ['--artifact', 'earthfile+target/artifact', 'artifact'],
-        images: ''
+        images: '',
+        artifacts: 'artifact'
       },
       {
         artifact: '',
@@ -51,8 +53,13 @@ describe('Run Action', () => {
         runner_address: 'localhost',
         runner_port: '8372',
         target: 'target',
-        command: ['earthfile+target', '--buildkit-host', 'tcp://localhost:8372'],
-        images: ''
+        command: [
+          'earthfile+target',
+          '--buildkit-host',
+          'tcp://localhost:8372'
+        ],
+        images: '',
+        artifacts: ''
       },
       {
         artifact: '',
@@ -64,11 +71,23 @@ describe('Run Action', () => {
         runner_port: '',
         target: 'target',
         command: ['earthfile+target', '--flag1', 'test', '-f2', 'test2'],
-        images: 'image1:tag1 image2:tag2'
+        images: 'image1:tag1 image2:tag2',
+        artifacts: ''
       }
     ])(
       `should execute the correct command`,
-      async ({ artifact, earthfile, flags, output, runner_address, runner_port, target, command, images }) => {
+      async ({
+        artifact,
+        earthfile,
+        flags,
+        output,
+        runner_address,
+        runner_port,
+        target,
+        command,
+        images,
+        artifacts
+      }) => {
         const getInputMock = core.getInput as jest.Mock
         getInputMock.mockImplementation((name: string) => {
           switch (name) {
@@ -101,6 +120,7 @@ describe('Run Action', () => {
         expect(process.stdout.write).toHaveBeenCalledWith('stdout')
         expect(process.stderr.write).toHaveBeenCalledWith(output)
         expect(core.setOutput).toHaveBeenCalledWith('images', images)
+        expect(core.setOutput).toHaveBeenCalledWith('artifacts', artifacts)
       }
     )
   })

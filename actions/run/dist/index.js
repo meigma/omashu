@@ -2881,20 +2881,31 @@ async function run() {
     const runner_port = core.getInput('runner_port');
     const target = core.getInput('target');
     const command = 'earthly';
-    let args = artifact ? ['--artifact', `${earthfile}+${target}/${artifact}`, `${artifact}`] : [`${earthfile}+${target}`];
+    let args = artifact
+        ? ['--artifact', `${earthfile}+${target}/${artifact}`, `${artifact}`]
+        : [`${earthfile}+${target}`];
     args = flags ? args.concat(flags.split(' ')) : args;
-    args = runner_address ? args.concat(['--buildkit-host', `tcp://${runner_address}:${runner_port}`]) : args;
+    args = runner_address
+        ? args.concat(['--buildkit-host', `tcp://${runner_address}:${runner_port}`])
+        : args;
     core.info(`Running command: ${command} ${args.join(' ')}`);
     const output = await spawnCommand(command, args);
     // TODO: The newest version of Earthly attaches annotations to the images
     let matches;
-    const regex = /^Image .*? output as (.*?)$/gm;
+    const image_regex = /^Image .*? output as (.*?)$/gm;
     const images = [];
-    while ((matches = regex.exec(output)) !== null) {
+    while ((matches = image_regex.exec(output)) !== null) {
         images.push(matches[1]);
     }
+    const artifact_regex = /^Artifact .*? output as (.*?)$/gm;
+    const artifacts = [];
+    while ((matches = artifact_regex.exec(output)) !== null) {
+        artifacts.push(matches[1]);
+    }
     core.info(`Found images: ${images.join(' ')}`);
+    core.info(`Found artifacts: ${artifacts.join(' ')}`);
     core.setOutput('images', images.join(' '));
+    core.setOutput('artifacts', artifacts.join(' '));
 }
 async function spawnCommand(command, args) {
     return new Promise((resolve, reject) => {
