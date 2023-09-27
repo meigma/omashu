@@ -6737,35 +6737,6 @@ module.exports = require("util");
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -6786,47 +6757,51 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
+// ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
-/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "run": () => (/* binding */ run)
-/* harmony export */ });
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2186);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7784);
-/* harmony import */ var _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(2186);
+// EXTERNAL MODULE: ./node_modules/@actions/tool-cache/lib/tool-cache.js
+var tool_cache = __nccwpck_require__(7784);
+;// CONCATENATED MODULE: ./src/setup.ts
 
 
 const baseURL = 'https://github.com/meigma/omashu/releases/download/v%VER%/omashu-%VER%-linux_amd64.tar.gz';
 async function run() {
     try {
-        const version = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('version');
+        const version = core.getInput('version');
         if (!isSemVer(version)) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed('Invalid version');
+            core.setFailed('Invalid version');
             return;
         }
         const finalURL = baseURL.replace(/%VER%/g, version);
-        _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Downlaoading version ${version} from ${finalURL}`);
+        core.info(`Downlaoading version ${version} from ${finalURL}`);
         if (process.platform === 'linux') {
-            const downloadPath = await _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__.downloadTool(finalURL);
-            const extractPath = await _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__.extractTar(downloadPath, '/usr/local/bin');
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Installed omashu to ${extractPath}`);
+            const downloadPath = await tool_cache.downloadTool(finalURL);
+            const extractPath = await tool_cache.extractTar(downloadPath, '/usr/local/bin');
+            core.info(`Installed omashu to ${extractPath}`);
         }
         else {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed('Unsupported platform');
+            core.setFailed('Unsupported platform');
         }
     }
     catch (error) {
         if (error instanceof Error) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
+            core.setFailed(error.message);
         }
         else {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed('Unknown error');
+            core.setFailed('Unknown error');
         }
     }
 }
 function isSemVer(version) {
     return /^\d+\.\d+\.\d+$/.test(version);
 }
+run();
+
+;// CONCATENATED MODULE: ./src/index.ts
+
 run();
 
 })();
