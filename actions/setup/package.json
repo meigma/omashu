@@ -1,8 +1,4 @@
 {
-  "name": "setup",
-  "version": "0.1.0",
-  "description": "Setup the Omashu CLI on the runner",
-  "main": "index.js",
   "scripts": {
     "format": "prettier --write '**/*.ts'",
     "format:check": "prettier --check '**/*.ts'",
@@ -10,9 +6,6 @@
     "package": "ncc build src/index.ts --license licenses.txt",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",

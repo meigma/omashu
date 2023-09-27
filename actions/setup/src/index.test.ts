@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
-import { run } from './index'
+import { run } from './setup'
 
 jest.mock('@actions/core', () => {
   return {

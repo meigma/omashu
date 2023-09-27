@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import { exec } from 'child_process'
-import { run } from './index'
+import { run } from './discover'
 
 jest.mock('@actions/core', () => ({
   getBooleanInput: jest.fn(),
@@ -13,7 +13,7 @@ jest.mock('child_process', () => ({
   exec: jest.fn(
     (
       _,
-      callback: (error: Error | null, stdout: string, stderr: string) => void
+      callback: (_error: Error | null, _stdout: string, _stderr: string) => void
     ) => {
       callback(null, 'mocked output', '')
     }

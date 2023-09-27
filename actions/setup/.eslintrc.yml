@@ -5,6 +5,7 @@ env:
 
 globals:
   Atomics: readonly
+  NodeJS: true
   SharedArrayBuffer: readonly
 
 ignorePatterns:
@@ -39,6 +40,7 @@ rules:
     "i18n-text/no-en": "off",
     "import/no-namespace": "off",
     "no-console": "off",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "_.*?" }],
     "prettier/prettier": "error",
     "semi": "off",
     "@typescript-eslint/array-type": "error",
@@ -63,7 +65,7 @@ rules:
     "@typescript-eslint/no-require-imports": "error",
     "@typescript-eslint/no-unnecessary-qualifier": "error",
     "@typescript-eslint/no-unnecessary-type-assertion": "error",
-    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-useless-constructor": "error",
     "@typescript-eslint/no-var-requires": "error",
     "@typescript-eslint/prefer-for-of": "warn",

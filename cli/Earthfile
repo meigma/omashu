@@ -39,7 +39,6 @@ build:
     RUN go build -ldflags="-extldflags=-static" -o bin/omashu cmd/main.go
 
     SAVE ARTIFACT bin/omashu omashu
-    SAVE ARTIFACT bin/omashu AS LOCAL bin/omashu
 
 docker:
     FROM earthly/earthly:v0.7.6
@@ -55,7 +54,7 @@ docker:
     # Trust WORKDIR
     RUN git config --global --add safe.directory /workspace
 
-    COPY +build/ci /usr/local/bin/ci
+    COPY +build/omashu /usr/local/bin/omashu
 
     IF [ "$registry" = "" ]
         ARG registry_final=$registry
@@ -63,5 +62,5 @@ docker:
         ARG registry_final=${registry}/
     END
 
-    ENTRYPOINT ["/usr/local/bin/ci"]
+    ENTRYPOINT ["/usr/local/bin/omashu"]
     SAVE IMAGE --push ${registry_final}cli:${tag}
