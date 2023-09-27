@@ -1,11 +1,6 @@
 import * as core from '@actions/core'
-import {
-  spawn,
-  SpawnOptionsWithoutStdio,
-  ChildProcessWithoutNullStreams
-} from 'child_process'
+import { spawn, SpawnOptionsWithoutStdio } from 'child_process'
 import { run } from './run'
-import { create } from 'domain'
 
 jest.mock('@actions/core', () => ({
   getInput: jest.fn(),
@@ -15,8 +10,12 @@ jest.mock('@actions/core', () => ({
 jest.mock('child_process', () => ({
   spawn: jest.fn()
 }))
-jest.spyOn(process.stdout, 'write').mockImplementation(() => true)
-jest.spyOn(process.stderr, 'write').mockImplementation(() => true)
+const stdoutSpy = jest
+  .spyOn(process.stdout, 'write')
+  .mockImplementation(() => true)
+const stderrSpy = jest
+  .spyOn(process.stderr, 'write')
+  .mockImplementation(() => true)
 
 describe('Run Action', () => {
   describe('when testing running the earthly command', () => {
@@ -26,8 +25,8 @@ describe('Run Action', () => {
         earthfile: 'earthfile',
         flags: '',
         output: '',
-        runner_address: '',
-        runner_port: '',
+        runnerAddress: '',
+        runnerPort: '',
         target: 'target',
         command: ['earthfile+target'],
         images: '',
@@ -38,8 +37,8 @@ describe('Run Action', () => {
         earthfile: 'earthfile',
         flags: '',
         output: 'Artifact +target/artifact output as artifact\n',
-        runner_address: '',
-        runner_port: '',
+        runnerAddress: '',
+        runnerPort: '',
         target: 'target',
         command: ['--artifact', 'earthfile+target/artifact', 'artifact'],
         images: '',
@@ -50,8 +49,8 @@ describe('Run Action', () => {
         earthfile: 'earthfile',
         flags: '',
         output: '',
-        runner_address: 'localhost',
-        runner_port: '8372',
+        runnerAddress: 'localhost',
+        runnerPort: '8372',
         target: 'target',
         command: [
           'earthfile+target',
@@ -67,8 +66,8 @@ describe('Run Action', () => {
         flags: '--flag1 test -f2 test2',
         output:
           'Image +docker output as image1:tag1\nImage +docker output as image2:tag2\n',
-        runner_address: '',
-        runner_port: '',
+        runnerAddress: '',
+        runnerPort: '',
         target: 'target',
         command: ['earthfile+target', '--flag1', 'test', '-f2', 'test2'],
         images: 'image1:tag1 image2:tag2',
@@ -81,8 +80,8 @@ describe('Run Action', () => {
         earthfile,
         flags,
         output,
-        runner_address,
-        runner_port,
+        runnerAddress,
+        runnerPort,
         target,
         command,
         images,
@@ -100,9 +99,9 @@ describe('Run Action', () => {
             case 'output':
               return output
             case 'runner_address':
-              return runner_address
+              return runnerAddress
             case 'runner_port':
-              return runner_port
+              return runnerPort
             case 'target':
               return target
             default:
@@ -117,8 +116,8 @@ describe('Run Action', () => {
 
         expect(spawn).toHaveBeenCalledTimes(1)
         expect(spawn).toHaveBeenCalledWith('earthly', command)
-        expect(process.stdout.write).toHaveBeenCalledWith('stdout')
-        expect(process.stderr.write).toHaveBeenCalledWith(output)
+        expect(stdoutSpy).toHaveBeenCalledWith('stdout')
+        expect(stderrSpy).toHaveBeenCalledWith(output)
         expect(core.setOutput).toHaveBeenCalledWith('images', images)
         expect(core.setOutput).toHaveBeenCalledWith('artifacts', artifacts)
       }
@@ -128,25 +127,28 @@ describe('Run Action', () => {
 
 function createSpawnMock(stdout: string, stderr: string, code: number) {
   return (
-    command: string,
-    args?: readonly string[] | undefined,
-    options?: SpawnOptionsWithoutStdio | undefined
+    _command: string,
+    _args?: readonly string[] | undefined,
+    _options?: SpawnOptionsWithoutStdio | undefined
   ) => {
     return {
       stdout: {
-        on: (event: string, listener: (data: string) => void) => {
+        on: (event: string, listener: (_data: string) => void) => {
           listener(stdout)
         }
       },
       stderr: {
-        on: (event: string, listener: (data: string) => void) => {
+        on: (event: string, listener: (_data: string) => void) => {
           listener(stderr)
         }
       },
       on: jest.fn(
         (
           event: 'close',
-          listener: (code: number | null, signal: NodeJS.Signals | null) => void
+          listener: (
+            _code: number | null,
+            _signal: NodeJS.Signals | null
+          ) => void
         ) => {
           listener(code, null)
         }
