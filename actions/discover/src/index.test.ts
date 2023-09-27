@@ -13,7 +13,7 @@ jest.mock('child_process', () => ({
   exec: jest.fn(
     (
       _,
-      callback: (error: Error | null, stdout: string, stderr: string) => void
+      callback: (_error: Error | null, _stdout: string, _stderr: string) => void
     ) => {
       callback(null, 'mocked output', '')
     }
