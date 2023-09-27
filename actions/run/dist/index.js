@@ -2877,29 +2877,29 @@ async function run() {
     const artifact = core.getInput('artifact');
     const earthfile = core.getInput('earthfile');
     const flags = core.getInput('flags');
-    const runner_address = core.getInput('runner_address');
-    const runner_port = core.getInput('runner_port');
+    const runnerAddress = core.getInput('runner_address');
+    const runnerPort = core.getInput('runner_port');
     const target = core.getInput('target');
     const command = 'earthly';
     let args = artifact
         ? ['--artifact', `${earthfile}+${target}/${artifact}`, `${artifact}`]
         : [`${earthfile}+${target}`];
     args = flags ? args.concat(flags.split(' ')) : args;
-    args = runner_address
-        ? args.concat(['--buildkit-host', `tcp://${runner_address}:${runner_port}`])
+    args = runnerAddress
+        ? args.concat(['--buildkit-host', `tcp://${runnerAddress}:${runnerPort}`])
         : args;
     core.info(`Running command: ${command} ${args.join(' ')}`);
     const output = await spawnCommand(command, args);
     // TODO: The newest version of Earthly attaches annotations to the images
     let matches;
-    const image_regex = /^Image .*? output as (.*?)$/gm;
+    const imageRegex = /^Image .*? output as (.*?)$/gm;
     const images = [];
-    while ((matches = image_regex.exec(output)) !== null) {
+    while ((matches = imageRegex.exec(output)) !== null) {
         images.push(matches[1]);
     }
-    const artifact_regex = /^Artifact .*? output as (.*?)$/gm;
+    const artifactRegex = /^Artifact .*? output as (.*?)$/gm;
     const artifacts = [];
-    while ((matches = artifact_regex.exec(output)) !== null) {
+    while ((matches = artifactRegex.exec(output)) !== null) {
         artifacts.push(matches[1]);
     }
     core.info(`Found images: ${images.join(' ')}`);
@@ -2911,10 +2911,10 @@ async function spawnCommand(command, args) {
     return new Promise((resolve, reject) => {
         const child = (0,external_child_process_namespaceObject.spawn)(command, args);
         let output = '';
-        child.stdout.on('data', data => {
+        child.stdout.on('data', (data) => {
             process.stdout.write(data);
         });
-        child.stderr.on('data', data => {
+        child.stderr.on('data', (data) => {
             process.stderr.write(data);
             output += data;
         });
